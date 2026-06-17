@@ -27,6 +27,52 @@
 - **완전 반응형 UI** — 모바일/데스크톱 레이아웃 분기, 하단 플로팅 퀵바(전화·카톡·블로그·진단).
 - **SEO 최적화** — 메타데이터, 키워드, 오픈그래프 아이콘 구성.
 
+## 🎬 기능 시연
+
+### 인터랙티브 WebGL 유체 히어로
+마우스/터치 움직임에 실시간으로 반응하는 유체 시뮬레이션을 메인 배경에 직접 구현했습니다. CPU가 아닌 **GPU 셰이더(GLSL)** 에서 Navier–Stokes 기반의 advection · vorticity · pressure 연산을 수행합니다.
+
+![WebGL 유체 히어로](docs/hero-fluid.gif)
+
+> **사용 기술:** WebGL · GLSL 프래그먼트 셰이더(유체 솔버) · `requestAnimationFrame` · `IntersectionObserver`(화면 밖이면 자동 정지) · `prefers-reduced-motion` 대응
+
+### 다크 / 라이트 테마 전환
+클릭 지점에서 원형으로 퍼지는 부드러운 전환 애니메이션. 사용자의 선택을 기억하고 시스템 설정도 감지합니다.
+
+![테마 전환](docs/theme.gif)
+
+> **사용 기술:** React Context · **View Transitions API**(원형 클립 애니메이션) · `localStorage` · Tailwind `dark:` 모드
+
+### 무료 진단 신청 폼
+입력값 유효성 검사와 커스텀 드롭다운을 갖춘 문의 폼. 제출 시 **Supabase**에 데이터가 저장되고 관리자 대시보드로 연동됩니다.
+
+![무료 진단 폼](docs/diagnosis.gif)
+
+> **사용 기술:** React 상태 관리 · 커스텀 셀렉트 UI · 폼 유효성 검사 · Supabase `insert`(anon 권한)
+
+### 업종별 성공 사례 캐러셀
+모바일에서는 스와이프 캐러셀, 데스크톱에서는 그리드로 분기되는 반응형 사례 갤러리.
+
+![사례 캐러셀](docs/cases.gif)
+
+> **사용 기술:** Swiper · `next/image`(최적화·lazy load) · 반응형 레이아웃 분기
+
+### 고객 후기 마퀴
+끊김 없이 무한 반복되며 마우스 오버 시 멈추는 양방향 흐름 애니메이션.
+
+![후기 마퀴](docs/reviews.gif)
+
+> **사용 기술:** CSS `@keyframes` 마퀴 애니메이션 · 무한 루프 · hover 일시정지
+
+### 문의 수집 → 관리자 대시보드 연동
+방문자가 **무료 진단(문의)·예약** 폼을 제출하면 데이터가 **Supabase**에 저장되고, 관리자 로그인 후 대시보드에 실시간으로 반영됩니다. 상태 관리(대기/진행중/완료), 검색, 통계 차트, **엑셀 내보내기**까지 지원합니다.
+
+![관리자 데이터 플로우](docs/admin-flow.gif)
+
+> **사용 기술:** Supabase Auth(관리자 로그인) · Supabase Postgres + **RLS**(공개 폼은 anon `insert`만, 조회는 인증 필요) · xlsx(엑셀 출력) · 커스텀 이벤트 기반 실시간 갱신
+>
+> *위 GIF의 데이터는 모두 데모용 테스트 값입니다.*
+
 ## 🛠️ 기술 스택
 
 | 분류 | 사용 기술 |
