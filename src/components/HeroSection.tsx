@@ -17,6 +17,10 @@ export default function HeroSection() {
       return;
     }
 
+    // 모션 최소화를 선호하는 사용자는 무거운 유체 시뮬레이션을 실행하지 않음 (접근성/배터리)
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
     // Attempt to enable floating point extensions for high-precision physical math
     const halfFloat = gl.getExtension("OES_texture_half_float");
     const extType = halfFloat ? halfFloat.HALF_FLOAT_OES : gl.UNSIGNED_BYTE;
@@ -409,7 +413,19 @@ export default function HeroSection() {
 
     // Render loop variables
     let animationFrameId: number;
+    let isRunning = false;
     let time = 0;
+
+    const startLoop = () => {
+      if (isRunning) return;
+      isRunning = true;
+      render();
+    };
+
+    const stopLoop = () => {
+      isRunning = false;
+      cancelAnimationFrame(animationFrameId);
+    };
 
     const render = () => {
       time += 0.016;
@@ -590,13 +606,38 @@ export default function HeroSection() {
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-      animationFrameId = requestAnimationFrame(render);
+      if (isRunning) {
+        animationFrameId = requestAnimationFrame(render);
+      }
     };
 
-    render();
+    // Hero가 화면에 보일 때만 시뮬레이션을 돌려 스크롤·배터리 부담을 줄임
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
+
+    // 탭이 백그라운드로 전환되면 렌더링 중단
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopLoop();
+      } else {
+        startLoop();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      stopLoop();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("touchmove", handleTouchMove);
