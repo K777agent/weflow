@@ -248,14 +248,14 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
     >
       {/* Crown Badge */}
       {plan.highlight && (
-        <span className="absolute right-6 top-6 inline-flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-[10px] font-extrabold text-white uppercase shadow-md dark:bg-blue-500 animate-pulse">
-          <Crown className="h-3 w-3 fill-current" />
+        <span className="absolute right-6 top-6 inline-flex items-center gap-0.5 rounded-full bg-blue-600 px-2 py-0.5 text-[8px] sm:px-3 sm:py-1 sm:text-[10px] font-extrabold text-white uppercase shadow-md dark:bg-blue-500 animate-pulse">
+          <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 fill-current" />
           RECOMMEND
         </span>
       )}
 
       <div className="mb-6">
-        <h3 className="text-lg font-bold text-gray-950 dark:text-white">{plan.name}</h3>
+        <h3 className="text-lg font-bold text-gray-950 dark:text-white pr-16 md:pr-0">{plan.name}</h3>
         <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{plan.desc}</p>
       </div>
 

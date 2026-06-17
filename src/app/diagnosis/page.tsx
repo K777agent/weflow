@@ -7,8 +7,10 @@ import Footer from "@/components/Footer";
 import { DiagnosisInput } from "@/lib/types";
 import { ClipboardCheck, Check, Send, Sparkles, ChevronDown } from "lucide-react";
 import { addInquiry } from "@/lib/storage";
+import { useRouter } from "next/navigation";
 
 export default function DiagnosisPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState<DiagnosisInput>({
     name: "",
     phone: "",
@@ -78,16 +80,8 @@ export default function DiagnosisPage() {
     setIsSubmitted(true);
 
     setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: "",
-        phone: "",
-        type: "랜딩페이지 제작",
-        industry: "",
-        additionalRequests: "",
-        privacyConsent: false,
-      });
-    }, 4000);
+      router.push("/");
+    }, 3500);
   };
 
   return (

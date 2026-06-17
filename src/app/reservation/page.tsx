@@ -7,8 +7,10 @@ import Footer from "@/components/Footer";
 import { ReservationInput } from "@/lib/types";
 import { Calendar as CalendarIcon, Clock, Check, Send, ChevronDown } from "lucide-react";
 import { addReservation } from "@/lib/storage";
+import { useRouter } from "next/navigation";
 
 export default function ReservationPage() {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
@@ -154,19 +156,8 @@ export default function ReservationPage() {
     setIsSubmitted(true);
 
     setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: "",
-        phone: "",
-        date: todayString,
-        time: "",
-        type: "랜딩페이지 제작",
-        industry: "",
-        additionalRequests: "",
-        privacyConsent: false,
-      });
-      setSelectedTime("");
-    }, 4000);
+      router.push("/");
+    }, 3500);
   };
 
   return (
