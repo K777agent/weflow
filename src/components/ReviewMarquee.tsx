@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { reviewsData } from "@/lib/reviews-data";
 import { Star, ChevronRight } from "lucide-react";
 
 export default function ReviewMarquee() {
+  const [isPaused, setIsPaused] = useState(false);
+
   // Split reviews into two arrays for the two marquee rows
   const midPoint = Math.ceil(reviewsData.length / 2);
   const row1 = reviewsData.slice(0, midPoint);
@@ -54,14 +59,24 @@ export default function ReviewMarquee() {
       </div>
 
       {/* Marquee Rows Container */}
-      <div className="relative flex flex-col gap-6 py-4">
+      <div 
+        className="relative flex flex-col gap-6 py-4 cursor-pointer"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+        onTouchCancel={() => setIsPaused(false)}
+      >
         {/* Decorative Blur Overlays for edges */}
         <div className="absolute left-0 top-0 bottom-0 z-10 w-16 bg-gradient-to-r from-gray-50/30 via-transparent to-transparent pointer-events-none dark:from-[#030712]/40" />
         <div className="absolute right-0 top-0 bottom-0 z-10 w-16 bg-gradient-to-l from-gray-50/30 via-transparent to-transparent pointer-events-none dark:from-[#030712]/40" />
 
         {/* Row 1 - Sliding Left */}
         <div className="flex overflow-hidden select-none">
-          <div className="animate-marquee-left">
+          <div 
+            className="animate-marquee-left"
+            style={{ animationPlayState: isPaused ? "paused" : "running" }}
+          >
             {doubledRow1.map((review, idx) => (
               <ReviewCard key={`r1-${review.id}-${idx}`} review={review} />
             ))}
@@ -70,7 +85,10 @@ export default function ReviewMarquee() {
 
         {/* Row 2 - Sliding Right */}
         <div className="flex overflow-hidden select-none">
-          <div className="animate-marquee-right">
+          <div 
+            className="animate-marquee-right"
+            style={{ animationPlayState: isPaused ? "paused" : "running" }}
+          >
             {doubledRow2.map((review, idx) => (
               <ReviewCard key={`r2-${review.id}-${idx}`} review={review} />
             ))}

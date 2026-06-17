@@ -57,18 +57,10 @@
   animation: marquee-left 40s linear infinite;
 }
 
-.animate-marquee-left:hover {
-  animation-play-state: paused;
-}
-
 .animate-marquee-right {
   display: flex;
   width: max-content;
   animation: marquee-right 40s linear infinite;
-}
-
-.animate-marquee-right:hover {
-  animation-play-state: paused;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
