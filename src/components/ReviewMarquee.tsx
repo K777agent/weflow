@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef } from "react";
 import { reviewsData } from "@/lib/reviews-data";
 import { Star, ChevronRight } from "lucide-react";
 
 export default function ReviewMarquee() {
-  const [isPaused, setIsPaused] = useState(false);
+  const row1Ref = useRef<HTMLDivElement>(null);
+  const row2Ref = useRef<HTMLDivElement>(null);
 
   // Split reviews into two arrays for the two marquee rows
   const midPoint = Math.ceil(reviewsData.length / 2);
@@ -16,6 +17,12 @@ export default function ReviewMarquee() {
   // Duplicate arrays to create a seamless looping effect
   const doubledRow1 = [...row1, ...row1];
   const doubledRow2 = [...row2, ...row2];
+
+  const setPlayState = (ref: React.RefObject<HTMLDivElement>, state: "paused" | "running") => {
+    if (ref.current) {
+      ref.current.style.animationPlayState = state;
+    }
+  };
 
   const ReviewCard = ({ review }: { review: typeof reviewsData[0] }) => (
     <div className="mx-3 w-[260px] flex-shrink-0 rounded-2xl border border-gray-200/50 bg-white/80 p-5 shadow-sm transition-all dark:border-gray-700 dark:bg-gray-900/50 md:w-[320px]">
@@ -59,23 +66,23 @@ export default function ReviewMarquee() {
       </div>
 
       {/* Marquee Rows Container */}
-      <div 
-        className="relative flex flex-col gap-6 py-4 cursor-pointer"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
-        onTouchCancel={() => setIsPaused(false)}
-      >
+      <div className="relative flex flex-col gap-6 py-4">
         {/* Decorative Blur Overlays for edges */}
         <div className="absolute left-0 top-0 bottom-0 z-10 w-16 bg-gradient-to-r from-gray-50/30 via-transparent to-transparent pointer-events-none dark:from-[#030712]/40" />
         <div className="absolute right-0 top-0 bottom-0 z-10 w-16 bg-gradient-to-l from-gray-50/30 via-transparent to-transparent pointer-events-none dark:from-[#030712]/40" />
 
         {/* Row 1 - Sliding Left */}
-        <div className="flex overflow-hidden select-none">
+        <div 
+          className="flex overflow-hidden select-none cursor-pointer"
+          onMouseEnter={() => setPlayState(row1Ref, "paused")}
+          onMouseLeave={() => setPlayState(row1Ref, "running")}
+          onTouchStart={() => setPlayState(row1Ref, "paused")}
+          onTouchEnd={() => setPlayState(row1Ref, "running")}
+          onTouchCancel={() => setPlayState(row1Ref, "running")}
+        >
           <div 
+            ref={row1Ref}
             className="animate-marquee-left"
-            style={{ animationPlayState: isPaused ? "paused" : "running" }}
           >
             {doubledRow1.map((review, idx) => (
               <ReviewCard key={`r1-${review.id}-${idx}`} review={review} />
@@ -84,10 +91,17 @@ export default function ReviewMarquee() {
         </div>
 
         {/* Row 2 - Sliding Right */}
-        <div className="flex overflow-hidden select-none">
+        <div 
+          className="flex overflow-hidden select-none cursor-pointer"
+          onMouseEnter={() => setPlayState(row2Ref, "paused")}
+          onMouseLeave={() => setPlayState(row2Ref, "running")}
+          onTouchStart={() => setPlayState(row2Ref, "paused")}
+          onTouchEnd={() => setPlayState(row2Ref, "running")}
+          onTouchCancel={() => setPlayState(row2Ref, "running")}
+        >
           <div 
+            ref={row2Ref}
             className="animate-marquee-right"
-            style={{ animationPlayState: isPaused ? "paused" : "running" }}
           >
             {doubledRow2.map((review, idx) => (
               <ReviewCard key={`r2-${review.id}-${idx}`} review={review} />
