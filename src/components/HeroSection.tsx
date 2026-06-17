@@ -457,7 +457,7 @@ export default function HeroSection() {
       gl.uniform1i(gl.getUniformLocation(advectProgram, "uVelocity"), 0);
       gl.uniform1i(gl.getUniformLocation(advectProgram, "uSource"), 1);
       gl.uniform1f(gl.getUniformLocation(advectProgram, "uDt"), 0.016);
-      gl.uniform1f(gl.getUniformLocation(advectProgram, "uDissipation"), 0.993); // Ink longevity
+      gl.uniform1f(gl.getUniformLocation(advectProgram, "uDissipation"), 0.985); // Ink longevity (잔상 유지하되 좀 더 빨리 정리)
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex);
       gl.activeTexture(gl.TEXTURE1);
@@ -531,7 +531,7 @@ export default function HeroSection() {
       gl.uniform2f(gl.getUniformLocation(vorticityConfinementProgram, "uTexelSize"), texelSizeX, texelSizeY);
       gl.uniform1i(gl.getUniformLocation(vorticityConfinementProgram, "uVelocity"), 0);
       gl.uniform1i(gl.getUniformLocation(vorticityConfinementProgram, "uCurl"), 1);
-      gl.uniform1f(gl.getUniformLocation(vorticityConfinementProgram, "uCurlStrength"), 3.5); // Vorticity curl strength
+      gl.uniform1f(gl.getUniformLocation(vorticityConfinementProgram, "uCurlStrength"), 2.0); // Vorticity curl strength (난류 줄여 잔상이 실타래처럼 찢기지 않게)
       gl.uniform1f(gl.getUniformLocation(vorticityConfinementProgram, "uDt"), 0.016);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, velocity.read.tex);

@@ -36,7 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # project: 업로드 제외 파일
-README.md
 /scratch/
 pdf_text.txt
 temp_*.pdf

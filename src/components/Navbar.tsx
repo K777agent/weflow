@@ -29,6 +29,7 @@ export default function Navbar() {
             width={120}
             height={30}
             priority
+            style={{ width: "auto", height: "auto" }}
             className="h-auto w-auto max-h-[30px] object-contain dark:invert"
           />
         </Link>

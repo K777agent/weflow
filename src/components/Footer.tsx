@@ -55,6 +55,7 @@ export default function Footer() {
                 alt="WEFLOW"
                 width={110}
                 height={28}
+                style={{ width: "auto", height: "auto" }}
                 className="h-auto w-auto max-h-[28px] object-contain dark:invert"
               />
             </Link>
