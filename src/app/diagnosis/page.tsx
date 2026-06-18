@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { DiagnosisInput } from "@/lib/types";
 import { ClipboardCheck, Check, Send, Sparkles, ChevronDown } from "lucide-react";
 import { addInquiry } from "@/lib/storage";
+import { isValidPhone } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 
 export default function DiagnosisPage() {
@@ -62,6 +63,7 @@ export default function DiagnosisPage() {
     e.preventDefault();
     if (!formData.name.trim()) return setError("이름을 입력해주세요.");
     if (!formData.phone.trim()) return setError("연락처를 입력해주세요.");
+    if (!isValidPhone(formData.phone)) return setError("올바른 연락처 형식이 아닙니다. (예: 010-1234-5678)");
     if (!formData.industry.trim()) return setError("업종을 입력해주세요.");
     if (!formData.privacyConsent) return setError("개인정보 동의가 필요합니다.");
 

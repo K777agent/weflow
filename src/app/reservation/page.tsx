@@ -5,8 +5,9 @@ import Navbar from "@/components/Navbar";
 import FloatingQuickBar from "@/components/FloatingQuickBar";
 import Footer from "@/components/Footer";
 import { ReservationInput } from "@/lib/types";
-import { Calendar as CalendarIcon, Clock, Check, Send, ChevronDown } from "lucide-react";
-import { addReservation } from "@/lib/storage";
+import { Calendar as CalendarIcon, Clock, Check, Send, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { addReservation, getReservationSlotCounts } from "@/lib/storage";
+import { isValidPhone } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 
 export default function ReservationPage() {
@@ -30,6 +31,7 @@ export default function ReservationPage() {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [slotCounts, setSlotCounts] = useState<Record<string, number>>({});
 
   const [isOpenTypeSelect, setIsOpenTypeSelect] = useState(false);
   const typeDropdownRef = useRef<HTMLDivElement>(null);
@@ -67,6 +69,21 @@ export default function ReservationPage() {
     }));
   }, [selectedDate, selectedTime]);
 
+  // 선택한 날짜의 시간대별 예약 인원수 조회 (마감 슬롯 비활성화용)
+  useEffect(() => {
+    if (!selectedDate) {
+      setSlotCounts({});
+      return;
+    }
+    let active = true;
+    getReservationSlotCounts(selectedDate).then((counts) => {
+      if (active) setSlotCounts(counts);
+    });
+    return () => {
+      active = false;
+    };
+  }, [selectedDate]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (typeDropdownRef.current && !typeDropdownRef.current.contains(e.target as Node)) {
@@ -76,6 +93,25 @@ export default function ReservationPage() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // 이번(실제 오늘) 달보다 과거로는 이동하지 못하게 막습니다.
+  const canGoPrevMonth = (() => {
+    if (!todayString) return false;
+    const [ty, tm] = todayString.split("-").map(Number);
+    return (
+      currentDate.getFullYear() > ty ||
+      (currentDate.getFullYear() === ty && currentDate.getMonth() + 1 > tm)
+    );
+  })();
+
+  const goToPrevMonth = () => {
+    if (!canGoPrevMonth) return;
+    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
 
   // Handle changing dates
   const handleDateClick = (day: number) => {
@@ -136,6 +172,7 @@ export default function ReservationPage() {
     e.preventDefault();
     if (!formData.name.trim()) return setError("이름을 입력해주세요.");
     if (!formData.phone.trim()) return setError("연락처를 입력해주세요.");
+    if (!isValidPhone(formData.phone)) return setError("올바른 연락처 형식이 아닙니다. (예: 010-1234-5678)");
     if (!formData.date) return setError("예약 날짜를 선택해주세요.");
     if (!formData.time) return setError("예약 시간을 선택해주세요.");
     if (!formData.industry.trim()) return setError("업종을 입력해주세요.");
@@ -149,6 +186,8 @@ export default function ReservationPage() {
       await addReservation(formData);
     } catch (err) {
       setIsSubmitting(false);
+      // 슬롯이 막 마감된 경우 등, 최신 인원수를 다시 반영합니다.
+      getReservationSlotCounts(selectedDate).then(setSlotCounts);
       return setError(err instanceof Error ? err.message : "접수 중 오류가 발생했습니다.");
     }
 
@@ -212,9 +251,28 @@ export default function ReservationPage() {
                       <CalendarIcon className="h-4 w-4 text-blue-500" />
                       예약 날짜 선택
                     </h3>
-                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                      {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={goToPrevMonth}
+                        disabled={!canGoPrevMonth}
+                        aria-label="이전 달"
+                        className="flex h-6 w-6 items-center justify-center rounded-md text-gray-500 transition-all hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed dark:text-gray-400 dark:hover:bg-gray-800"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <span className="text-xs font-bold text-gray-700 dark:text-gray-300 min-w-[72px] text-center">
+                        {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+                      </span>
+                      <button
+                        type="button"
+                        onClick={goToNextMonth}
+                        aria-label="다음 달"
+                        className="flex h-6 w-6 items-center justify-center rounded-md text-gray-500 transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Calendar Grid */}
@@ -263,23 +321,24 @@ export default function ReservationPage() {
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {timeSlots.map((time) => {
                       const isPast = isPastTimeSlot(time);
+                      const isFull = (slotCounts[time] ?? 0) >= 2;
                       const isSelected = selectedTime === time;
 
                       return (
                         <button
                           key={time}
                           type="button"
-                          disabled={isPast || !selectedDate}
+                          disabled={isPast || isFull || !selectedDate}
                           onClick={() => setSelectedTime(time)}
                           className={`rounded-lg py-2.5 text-xs font-semibold transition-all ${
                             isSelected
                               ? "bg-blue-600 text-white shadow-md shadow-blue-500/10 dark:bg-blue-500"
-                              : isPast
+                              : isPast || isFull
                               ? "bg-gray-50 text-gray-300 cursor-not-allowed dark:bg-gray-900/30 dark:text-gray-700"
                               : "border border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-300"
                           }`}
                         >
-                          {time}
+                          {isFull && !isPast ? "마감" : time}
                         </button>
                       );
                     })}

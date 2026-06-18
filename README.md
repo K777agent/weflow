@@ -21,7 +21,7 @@
 
 - **인터랙티브 WebGL 히어로** — 마우스/터치에 반응하는 실시간 유체 시뮬레이션(GPU 셰이더, Navier–Stokes 기반). 화면 밖이거나 탭이 비활성이면 자동으로 렌더링을 멈추고, `prefers-reduced-motion`을 존중합니다.
 - **다크 / 라이트 테마** — `localStorage` 기억 + 시스템 설정 감지, View Transitions API를 활용한 원형 전환 애니메이션.
-- **무료 진단 & 예약 폼** — 사용자가 제출한 문의/예약이 **Supabase**에 저장됩니다.
+- **무료 진단 & 예약 폼** — 사용자가 제출한 문의/예약이 **Supabase**에 저장됩니다. 예약은 달력 기반이며, 같은 날짜·시간대 **정원(2명)** 초과 시 자동으로 마감됩니다.
 - **관리자 대시보드** (`/admin`) — Supabase Auth 로그인, 문의·예약 목록 관리, 상태 변경, **엑셀(xlsx) 내보내기**, 비밀번호 재설정/계정 삭제.
 - **업종별 성공 사례 & 고객 후기** — Swiper 캐러셀, 무한 마퀴 애니메이션.
 - **완전 반응형 UI** — 모바일/데스크톱 레이아웃 분기, 하단 플로팅 퀵바(전화·카톡·블로그·진단).
@@ -49,6 +49,13 @@
 ![무료 진단 폼](docs/diagnosis.gif)
 
 > **사용 기술:** React 상태 관리 · 커스텀 셀렉트 UI · 폼 유효성 검사 · Supabase `insert`(anon 권한)
+
+### 실시간 예약 & 슬롯 정원 관리
+달력에서 날짜를 고르고 원하는 시간대를 선택해 상담을 예약합니다. **같은 날짜·시간대는 최대 2명까지만** 예약할 수 있고, 정원이 찬 슬롯은 자동으로 **"마감"** 처리되어 선택할 수 없습니다. 월 단위 달력 이동과 연락처 형식 검증도 지원합니다.
+
+![실시간 예약 폼](docs/reservation.gif)
+
+> **사용 기술:** 커스텀 달력 UI(월 이동·과거 날짜 차단) · Supabase **RPC `create_reservation`** — `pg_advisory_xact_lock` 으로 동시 예약 경합을 막은 뒤 슬롯 정원(2명)을 검사해 원자적으로 INSERT · **RPC `reservation_slot_counts`** 로 마감 슬롯 실시간 비활성화 · 연락처 형식 정규식 검증
 
 ### 업종별 성공 사례 캐러셀
 모바일에서는 스와이프 캐러셀, 데스크톱에서는 그리드로 분기되는 반응형 사례 갤러리.
@@ -129,7 +136,7 @@ SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 
 > ⚠️ `.env.local` 은 `.gitignore` 에 포함되어 커밋되지 않습니다. `service_role` 키는 서버 라우트에서만 사용되며 브라우저로 노출되지 않도록 주의하세요.
 
-Supabase 측에는 `reservations`, `inquiries` 테이블과, 공개 폼이 `anon` 권한으로 INSERT 만 가능하도록 하는 RLS 정책이 필요합니다.
+Supabase 측에는 `reservations`, `inquiries` 테이블과 RLS 정책, 그리고 예약 슬롯 정원(2명)을 강제하는 함수가 필요합니다. **`supabase/schema.sql`** 을 Supabase 대시보드의 SQL Editor 에서 실행하면 한 번에 구성됩니다.
 
 ### 3. 개발 서버 실행
 

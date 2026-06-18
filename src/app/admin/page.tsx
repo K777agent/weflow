@@ -980,7 +980,7 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-gray-55/50 border-b border-gray-150 text-gray-400 dark:bg-gray-900/10 dark:border-gray-855">
+                  <tr className="bg-gray-55/50 border-b border-gray-150 text-gray-400 dark:bg-gray-900/10 dark:border-gray-850">
                     <th className="py-2.5 px-1.5 sm:py-3 sm:px-4 font-bold whitespace-nowrap">상태</th>
                     <th className="py-2.5 px-1.5 sm:py-3 sm:px-4 font-bold whitespace-nowrap">이름</th>
                     <th className="py-2.5 px-1.5 sm:py-3 sm:px-4 font-bold whitespace-nowrap hidden md:table-cell">연락처</th>
@@ -1119,7 +1119,7 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-gray-55/50 border-b border-gray-150 text-gray-400 dark:bg-gray-900/10 dark:border-gray-855">
+                  <tr className="bg-gray-55/50 border-b border-gray-150 text-gray-400 dark:bg-gray-900/10 dark:border-gray-850">
                     <th className="py-2.5 px-1.5 sm:py-3 sm:px-4 font-bold whitespace-nowrap">상태</th>
                     <th className="py-2.5 px-1.5 sm:py-3 sm:px-4 font-bold whitespace-nowrap">이름</th>
                     <th className="py-2.5 px-1.5 sm:py-3 sm:px-4 font-bold whitespace-nowrap hidden md:table-cell">연락처</th>

@@ -73,23 +73,42 @@ export const getReservations = async (): Promise<Reservation[]> => {
 export const addReservation = async (
   input: Omit<Reservation, "id" | "status" | "createdAt">
 ): Promise<void> => {
-  // 공개 폼은 anon 권한으로 INSERT 만 수행합니다.
-  // (anon 에는 SELECT 정책이 없으므로 .select() 로 행을 돌려받지 않습니다.)
-  const { error } = await supabase.from("reservations").insert({
-    name: input.name,
-    phone: input.phone,
-    date: input.date,
-    time: input.time,
-    type: input.type,
-    industry: input.industry,
-    additional_requests: input.additionalRequests,
-    privacy_consent: input.privacyConsent,
+  // 공개 폼은 create_reservation() RPC 를 통해서만 예약을 넣습니다.
+  // (슬롯당 최대 2명 제한을 DB 에서 원자적으로 강제 — anon 직접 INSERT 정책 없음)
+  const { error } = await supabase.rpc("create_reservation", {
+    p_name: input.name,
+    p_phone: input.phone,
+    p_date: input.date,
+    p_time: input.time,
+    p_type: input.type,
+    p_industry: input.industry,
+    p_additional_requests: input.additionalRequests,
+    p_privacy_consent: input.privacyConsent,
   });
   if (error) {
+    if (error.message.includes("SLOT_FULL")) {
+      throw new Error("선택하신 날짜·시간대의 예약이 마감되었습니다. 다른 시간을 선택해 주세요.");
+    }
     console.error("[addReservation]", error.message);
     throw new Error("예약 접수에 실패했습니다. 잠시 후 다시 시도해 주세요.");
   }
   notifyDataChanged();
+};
+
+// 특정 날짜의 시간대별 예약 인원수 (마감 슬롯 비활성화 표시용)
+export const getReservationSlotCounts = async (
+  date: string
+): Promise<Record<string, number>> => {
+  const { data, error } = await supabase.rpc("reservation_slot_counts", { p_date: date });
+  if (error) {
+    console.error("[getReservationSlotCounts]", error.message);
+    return {};
+  }
+  const map: Record<string, number> = {};
+  (data ?? []).forEach((row: { slot_time: string; cnt: number }) => {
+    map[row.slot_time] = Number(row.cnt);
+  });
+  return map;
 };
 
 export const updateReservationStatus = async (
