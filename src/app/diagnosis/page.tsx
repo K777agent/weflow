@@ -98,8 +98,8 @@ export default function DiagnosisPage() {
             <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
               웹사이트 <span className="text-blue-600 dark:text-blue-400">무료 진단 & 견적</span>
             </h1>
-            <p className="mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-              현재 준비 중이신 프로젝트 또는 이미 운영 중인 사이트의 핵심 문제점을 <br /> 정밀 분석하고 최적화 솔루션을 제안해 드립니다.
+            <p className="mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto break-keep">
+              현재 준비 중이신 프로젝트 또는 이미 운영 중인 사이트의 핵심 문제점을 정밀 분석하고 최적화 솔루션을 제안해 드립니다.
             </p>
           </div>
 
@@ -117,7 +117,7 @@ export default function DiagnosisPage() {
             <div className="rounded-3xl border border-gray-200/50 bg-white p-6 md:p-10 dark:border-gray-800/50 dark:bg-gray-950/20 shadow-xl">
               <div className="mb-6 flex items-center gap-2 rounded-xl bg-blue-50/50 p-3 text-xs text-blue-600 dark:bg-blue-950/20 dark:text-blue-400">
                 <Sparkles className="h-4 w-4 shrink-0" />
-                <span>상세히 기재해주실수록 한층 정교한 분석 솔루션을 <br className="sm:hidden" /> 제공받으실 수 있습니다.</span>
+                <span className="break-keep">상세히 기재해주실수록 한층 정교한 분석 솔루션을 제공받으실 수 있습니다.</span>
               </div>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
