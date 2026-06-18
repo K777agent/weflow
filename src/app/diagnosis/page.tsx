@@ -36,7 +36,7 @@ export default function DiagnosisPage() {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setPlaceholder("구현하고 싶으신 기능, 벤치마킹 사이트 주소, 혹은 기대하시는\n디자인 분위기 등을 기재해주세요.");
+        setPlaceholder("구현하고 싶으신 기능, 벤치마킹 사이트 주소, 혹은\n기대하시는 디자인 분위기 등을 기재해주세요.");
       } else {
         setPlaceholder("구현하고 싶으신 기능, 벤치마킹 사이트 주소, 혹은 기대하시는 디자인 분위기 등을 기재해주세요.");
       }
