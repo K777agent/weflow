@@ -38,7 +38,9 @@ import {
   Sun,
   Moon,
   Menu,
-  X
+  X,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { useTheme } from "@/lib/theme-context";
 
@@ -48,6 +50,7 @@ export default function AdminPage() {
   // Authentication states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
@@ -71,6 +74,9 @@ export default function AdminPage() {
   const [resetNewPw, setResetNewPw] = useState("");
   const [resetConfirmPw, setResetConfirmPw] = useState("");
   const [resetPwError, setResetPwError] = useState("");
+  const [showResetCurrentPw, setShowResetCurrentPw] = useState(false);
+  const [showResetNewPw, setShowResetNewPw] = useState(false);
+  const [showResetConfirmPw, setShowResetConfirmPw] = useState(false);
 
   // Mobile navigation state
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -491,13 +497,21 @@ export default function AdminPage() {
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-3 pl-10 pr-4 text-xs text-white outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-3 pl-10 pr-11 text-xs text-white outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 transition-colors hover:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -1416,38 +1430,68 @@ export default function AdminPage() {
             }} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">현재 비밀번호</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="현재 비밀번호 입력"
-                  value={resetCurrentPw}
-                  onChange={(e) => setResetCurrentPw(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-2.5 px-3 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showResetCurrentPw ? "text" : "password"}
+                    required
+                    placeholder="현재 비밀번호 입력"
+                    value={resetCurrentPw}
+                    onChange={(e) => setResetCurrentPw(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-2.5 pl-3 pr-10 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowResetCurrentPw((prev) => !prev)}
+                    aria-label={showResetCurrentPw ? "비밀번호 숨기기" : "비밀번호 표시"}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                    {showResetCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">새 비밀번호</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="새 비밀번호 입력 (6자 이상)"
-                  value={resetNewPw}
-                  onChange={(e) => setResetNewPw(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-2.5 px-3 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showResetNewPw ? "text" : "password"}
+                    required
+                    placeholder="새 비밀번호 입력 (6자 이상)"
+                    value={resetNewPw}
+                    onChange={(e) => setResetNewPw(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-2.5 pl-3 pr-10 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowResetNewPw((prev) => !prev)}
+                    aria-label={showResetNewPw ? "비밀번호 숨기기" : "비밀번호 표시"}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                    {showResetNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">새 비밀번호 확인</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="새 비밀번호 다시 입력"
-                  value={resetConfirmPw}
-                  onChange={(e) => setResetConfirmPw(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-2.5 px-3 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showResetConfirmPw ? "text" : "password"}
+                    required
+                    placeholder="새 비밀번호 다시 입력"
+                    value={resetConfirmPw}
+                    onChange={(e) => setResetConfirmPw(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 py-2.5 pl-3 pr-10 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowResetConfirmPw((prev) => !prev)}
+                    aria-label={showResetConfirmPw ? "비밀번호 숨기기" : "비밀번호 표시"}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                    {showResetConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
 
               {resetPwError && (
